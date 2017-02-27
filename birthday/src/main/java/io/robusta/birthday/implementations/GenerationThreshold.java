@@ -11,9 +11,7 @@ import java.util.ArrayList;
 public class GenerationThreshold implements IGenerationThreshold{
 
 
-    public GenerationThreshold(int size) {
-
-
+    public GenerationThreshold() {
 
     }
 
@@ -30,13 +28,15 @@ public class GenerationThreshold implements IGenerationThreshold{
 
     @Override
     public int findSmallestNumberOfPeopleRequiredToHave50() {
+    	
         return 0;
     }
 
 
 	@Override
 	public float calculateProbabilityOfSame(int size) {
-		// TODO Auto-generated method stub
-		return 0;
+		Generation bigGeneration = new Generation(10_000, size);
+		float probability = bigGeneration.getNumberOfCollectionsThatHasTwoPeopleWithSameBirthday()/bigGeneration.getNumberOfCollectionsThatHasTwoPeopleWithSameBirthday();
+		return probability;
 	}
 }
