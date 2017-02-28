@@ -22,7 +22,11 @@ public class Deck extends LinkedList<Card> implements IDeck{
 	public Card pick() {
 		// shuffle;
 		// remove card from deck and returns it
-		return null;
+		Random r = new Random();
+		int randInt = r.nextInt(52);
+		Card newCard = this.get(randInt);
+		this.remove(randInt);
+		return newCard;
 	}
 
 
