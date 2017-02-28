@@ -39,8 +39,9 @@ public class Deck extends LinkedList<Card> implements IDeck {
 
 	@Override
 	public Hand giveHand() {
-		// A hand is a **5** card TreeSet
-		return null;
+		Hand newHand = new Hand();
+		newHand.addAll(pick(5));
+		return newHand;
 	}
 
 }
