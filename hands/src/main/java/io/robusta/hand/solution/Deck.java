@@ -9,15 +9,14 @@ import io.robusta.hand.Card;
 import io.robusta.hand.CardColor;
 import io.robusta.hand.interfaces.IDeck;
 
-public class Deck extends LinkedList<Card> implements IDeck{
+public class Deck extends LinkedList<Card> implements IDeck {
 
-	
 	private static final long serialVersionUID = -4686285366508321800L;
-	
+
 	public Deck() {
 
 	}
-	
+
 	@Override
 	public Card pick() {
 		// shuffle;
@@ -29,13 +28,13 @@ public class Deck extends LinkedList<Card> implements IDeck{
 		return newCard;
 	}
 
-
-	
-
 	@Override
 	public TreeSet<Card> pick(int number) {
-		// reuse pick()
-		return null;
+		TreeSet<Card> newSetCards = new TreeSet<Card>();
+		for (int i=0; i<number; i++){
+			newSetCards.add(this.pick());
+		}
+		return newSetCards;
 	}
 
 	@Override
@@ -43,7 +42,5 @@ public class Deck extends LinkedList<Card> implements IDeck{
 		// A hand is a **5** card TreeSet
 		return null;
 	}
-	
-	
-	
+
 }
