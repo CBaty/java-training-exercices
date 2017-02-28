@@ -1,5 +1,6 @@
 package io.robusta.hand.solution;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -59,13 +60,17 @@ public class Hand extends TreeSet<Card> implements IHand {
 				return false;
 			}	
 		}
-		
 		return true;
 	}
 
 	@Override
 	public boolean isFlush() {
-
+		
+		CardColor c = this.first().getColor();
+		for(Card card : this)
+			if (card.getColor() != c){
+				return false;
+			}
 		return true;
 	}
 
@@ -178,7 +183,12 @@ public class Hand extends TreeSet<Card> implements IHand {
 	@Override
 	public HandValue getValue() {
 		HandValue handValue = new HandValue();
-
+		
+		if(this.isStraight()){
+			handValue.setClassifier(HandClassifier.STRAIGHT);
+			handValue.setLevelValue(this.last().getValue());
+		}
+		
 		// Exemple for FourOfAKind ; // do for all classifiers
 		if (this.isFourOfAKind()) {
 			handValue.setClassifier(HandClassifier.FOUR_OF_A_KIND);
