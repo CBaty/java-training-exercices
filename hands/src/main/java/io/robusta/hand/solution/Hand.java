@@ -31,12 +31,11 @@ public class Hand extends TreeSet<Card> implements IHand {
 
 	@Override
 	public boolean beats(IHand villain) {
-		if(this.getValue().compareTo(villain.getValue())<0){
+		if (this.getValue().compareTo(villain.getValue()) < 0) {
 			return false;
-		}
-		else {
+		} else {
 			return true;
-		}		
+		}
 	}
 
 	@Override
@@ -134,20 +133,19 @@ public class Hand extends TreeSet<Card> implements IHand {
 		TreeSet<Card> groupRemaining = new TreeSet<>();
 		// May be adapted at the end of project:
 		// if straight or StraightFlush or full : return empty
-		//if two pair or FourOfAKind return 1 card
-		//if trips return 2 cards
-		//if  pair return 3 cards
-		//If High card or Flush, return 4 cards
-		if (this.isStraight() || this.isFull() || this.isStraightFlush()){
+		// if two pair or FourOfAKind return 1 card
+		// if trips return 2 cards
+		// if pair return 3 cards
+		// If High card or Flush, return 4 cards
+		if (this.isStraight() || this.isFull() || this.isStraightFlush()) {
 			return groupRemaining;
-		}
-		else if(this.isDoublePair() || this.isFourOfAKind()){
+		} else if (this.isDoublePair() || this.isFourOfAKind()) {
 			for (List<Card> group : map.values()) {
 				if (group.size() == 1) {
 					groupRemaining.add(group.get(0));
 				}
 			}
-		}else {
+		} else {
 			for (List<Card> group : map.values()) {
 				if (group.size() == 1) {
 					groupRemaining.add(group.get(0));
@@ -182,7 +180,7 @@ public class Hand extends TreeSet<Card> implements IHand {
 					if (firstPair > cards.get(0).getValue()) {
 						pairValue = firstPair;
 						secondValue = cards.get(0).getValue();
-						
+
 						return true;
 					} else {
 						pairValue = cards.get(0).getValue();
@@ -217,7 +215,7 @@ public class Hand extends TreeSet<Card> implements IHand {
 				}
 			}
 		}
-	return false;
+		return false;
 	}
 
 	@Override
@@ -268,7 +266,6 @@ public class Hand extends TreeSet<Card> implements IHand {
 	@Override
 	public HandValue getValue() {
 		HandValue handValue = new HandValue();
-		
 
 		if (this.isStraightFlush()) {
 			handValue.setClassifier(HandClassifier.STRAIGHT_FLUSH);
@@ -286,14 +283,14 @@ public class Hand extends TreeSet<Card> implements IHand {
 			handValue.setClassifier(HandClassifier.FLUSH);
 			handValue.setOtherCards(this.getGroupRemainingsCard(this.group()));
 		}
-		
+
 		if (this.isHighCard()) {
 			handValue.setClassifier(HandClassifier.HIGH_CARD);
 			handValue.setLevelValue(this.last().getValue());
 			handValue.setOtherCards(this.getGroupRemainingsCard(this.group()));
 			return handValue;
 		}
-		
+
 		if (this.isDoublePair()) {
 			handValue.setClassifier(HandClassifier.TWO_PAIR);
 			handValue.setLevelValue(this.pairValue);
@@ -317,14 +314,15 @@ public class Hand extends TreeSet<Card> implements IHand {
 		if (this.isTrips()) {
 			handValue.setClassifier(HandClassifier.TRIPS);
 			handValue.setLevelValue(this.mainValue);
-			
+
 		}
 
 		// Exemple for FourOfAKind ; // do for all classifiers
 		if (this.isFourOfAKind()) {
 			handValue.setClassifier(HandClassifier.FOUR_OF_A_KIND);
 			handValue.setLevelValue(this.mainValue);
-			handValue.setOtherCards(this.getGroupRemainingsCard(this.group())); // or this.getRemainings()
+			handValue.setOtherCards(this.getGroupRemainingsCard(this.group())); // or
+																				// this.getRemainings()
 			return handValue;
 		}
 		handValue.setOtherCards(this.getGroupRemainingsCard(this.group()));
@@ -333,19 +331,27 @@ public class Hand extends TreeSet<Card> implements IHand {
 
 	@Override
 	public boolean hasCardValue(int level) {
-
+		for (Card c : this) {
+			if (c.getValue() == level) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean hasAce() {
+		for (Card c : this) {
+			if (c.getValue() == 14 || c.getValue() == 1) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public int highestValue() {
-		// ace might be the highest value
-		return 0;
+		return this.last().getValue();
 	}
 
 	@Override

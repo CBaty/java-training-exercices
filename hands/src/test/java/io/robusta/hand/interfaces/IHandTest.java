@@ -133,6 +133,7 @@ public class IHandTest extends PokerTest {
 	public void testHasCardValue(){
 		IHand hand = newHand("4c Kh 2c 2s Qc");
 		assertTrue(hand.hasCardValue(13));
+		assertTrue(hand.hasCardValue(4));
 		assertFalse(hand.hasCardValue(1));
 	}
 	
