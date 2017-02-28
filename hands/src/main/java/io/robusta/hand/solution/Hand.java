@@ -141,7 +141,12 @@ public class Hand extends TreeSet<Card> implements IHand {
 
 	@Override
 	public boolean isPair() {
-
+		HashMap<Integer, List<Card>> map = this.group();
+		for (List<Card> group : map.values()) {
+			if (group.size() == 2) {
+				return true;
+			}
+		}
 		return false;
 
 	}
@@ -177,6 +182,9 @@ public class Hand extends TreeSet<Card> implements IHand {
 
 	@Override
 	public boolean isStraightFlush() {
+		if(this.isFlush() && this.isStraight()){
+			return true;
+		}
 		return false;
 	}
 
@@ -184,9 +192,19 @@ public class Hand extends TreeSet<Card> implements IHand {
 	public HandValue getValue() {
 		HandValue handValue = new HandValue();
 		
+		if(this.isStraightFlush()){
+			handValue.setClassifier(HandClassifier.STRAIGHT_FLUSH);
+			handValue.setLevelValue(this.last().getValue());
+			return handValue;
+		}
+			
 		if(this.isStraight()){
 			handValue.setClassifier(HandClassifier.STRAIGHT);
 			handValue.setLevelValue(this.last().getValue());
+		}
+		if(this.isFlush()){
+			handValue.setClassifier(HandClassifier.FLUSH);
+			handValue.setOtherCards(this.remainings);
 		}
 		
 		// Exemple for FourOfAKind ; // do for all classifiers
