@@ -31,7 +31,12 @@ public class Hand extends TreeSet<Card> implements IHand {
 
 	@Override
 	public boolean beats(IHand villain) {
-		return false;
+		if(this.getValue().compareTo(villain.getValue())<0){
+			return false;
+		}
+		else {
+			return true;
+		}		
 	}
 
 	@Override
@@ -128,12 +133,25 @@ public class Hand extends TreeSet<Card> implements IHand {
 	TreeSet<Card> getGroupRemainingsCard(Map<Integer, List<Card>> map) {
 		TreeSet<Card> groupRemaining = new TreeSet<>();
 		// May be adapted at the end of project:
-		// if straight or flush : return empty
-		// If High card, return 4 cards
-
-		for (List<Card> group : map.values()) {
-			if (group.size() == 1) {
-				groupRemaining.add(group.get(0));
+		// if straight or StraightFlush or full : return empty
+		//if two pair or FourOfAKind return 1 card
+		//if trips return 2 cards
+		//if  pair return 3 cards
+		//If High card or Flush, return 4 cards
+		if (this.isStraight() || this.isFull() || this.isStraightFlush()){
+			return groupRemaining;
+		}
+		else if(this.isDoublePair() || this.isFourOfAKind()){
+			for (List<Card> group : map.values()) {
+				if (group.size() == 1) {
+					groupRemaining.add(group.get(0));
+				}
+			}
+		}else {
+			for (List<Card> group : map.values()) {
+				if (group.size() == 1) {
+					groupRemaining.add(group.get(0));
+				}
 			}
 		}
 		return groupRemaining;
@@ -163,9 +181,12 @@ public class Hand extends TreeSet<Card> implements IHand {
 				if (counter == 2) {
 					if (firstPair > cards.get(0).getValue()) {
 						pairValue = firstPair;
+						secondValue = cards.get(0).getValue();
+						
 						return true;
 					} else {
 						pairValue = cards.get(0).getValue();
+						secondValue = firstPair;
 						return true;
 					}
 				}
@@ -201,7 +222,15 @@ public class Hand extends TreeSet<Card> implements IHand {
 
 	@Override
 	public boolean isFourOfAKind() {
-
+		HashMap<Integer, List<Card>> map = this.group();
+		if (map.size() == 2) {
+			for (List<Card> cards : map.values()) {
+				if (cards.size() == 4) {
+					mainValue = cards.get(0).getValue();
+					return true;
+				}
+			}
+		}
 		return false;
 
 	}
@@ -215,6 +244,7 @@ public class Hand extends TreeSet<Card> implements IHand {
 		for (List<Card> cards : map.values()) {
 			if (cards.size() == 2) {
 				firstPair = cards.get(0).getValue();
+				secondValue = cards.get(0).getValue();
 				counter++;
 			} else if (cards.size() == 3) {
 				mainValue = cards.get(0).getValue();
@@ -238,10 +268,12 @@ public class Hand extends TreeSet<Card> implements IHand {
 	@Override
 	public HandValue getValue() {
 		HandValue handValue = new HandValue();
+		
 
 		if (this.isStraightFlush()) {
 			handValue.setClassifier(HandClassifier.STRAIGHT_FLUSH);
 			handValue.setLevelValue(this.last().getValue());
+			handValue.setOtherCards(this.getGroupRemainingsCard(this.group()));
 			return handValue;
 		}
 
@@ -252,18 +284,21 @@ public class Hand extends TreeSet<Card> implements IHand {
 
 		if (this.isFlush()) {
 			handValue.setClassifier(HandClassifier.FLUSH);
-			handValue.setOtherCards(this.remainings);
+			handValue.setOtherCards(this.getGroupRemainingsCard(this.group()));
 		}
 		
 		if (this.isHighCard()) {
 			handValue.setClassifier(HandClassifier.HIGH_CARD);
 			handValue.setLevelValue(this.last().getValue());
+			handValue.setOtherCards(this.getGroupRemainingsCard(this.group()));
 			return handValue;
 		}
 		
 		if (this.isDoublePair()) {
 			handValue.setClassifier(HandClassifier.TWO_PAIR);
 			handValue.setLevelValue(this.pairValue);
+			handValue.setOtherCards(this.getGroupRemainingsCard(this.group()));
+			handValue.setSecondLevel(this.secondValue);
 			return handValue;
 		}
 
@@ -275,21 +310,24 @@ public class Hand extends TreeSet<Card> implements IHand {
 		if (this.isFull()) {
 			handValue.setClassifier(HandClassifier.FULL);
 			handValue.setLevelValue(this.mainValue);
+			handValue.setOtherCards(this.getGroupRemainingsCard(this.group()));
+			handValue.setSecondLevel(this.secondValue);
 			return handValue;
 		}
 		if (this.isTrips()) {
 			handValue.setClassifier(HandClassifier.TRIPS);
 			handValue.setLevelValue(this.mainValue);
+			
 		}
 
 		// Exemple for FourOfAKind ; // do for all classifiers
 		if (this.isFourOfAKind()) {
 			handValue.setClassifier(HandClassifier.FOUR_OF_A_KIND);
 			handValue.setLevelValue(this.mainValue);
-			handValue.setOtherCards(this.remainings); // or this.getRemainings()
+			handValue.setOtherCards(this.getGroupRemainingsCard(this.group())); // or this.getRemainings()
 			return handValue;
 		}
-
+		handValue.setOtherCards(this.getGroupRemainingsCard(this.group()));
 		return handValue;
 	}
 
@@ -311,8 +349,8 @@ public class Hand extends TreeSet<Card> implements IHand {
 	}
 
 	@Override
-	public int compareTo(IHandResolver o) {
-		return 0;
+	public int compareTo(IHandResolver other) {
+		return this.getValue().compareTo(other.getValue());
 	}
 
 }
